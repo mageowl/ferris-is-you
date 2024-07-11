@@ -1,13 +1,13 @@
-use std::any::TypeId;
-
 use crate::math::{Direction, UPt};
+
+use super::property::Property;
 
 pub type ObjectId = u64;
 
 #[derive(Clone, Copy)]
 pub enum ObjectClass {
     Generic(ObjectId),
-    TextProperty(TypeId),
+    TextProperty(&'static dyn Property),
     TextIs,
     TextNoun(ObjectId),
 }

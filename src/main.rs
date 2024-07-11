@@ -40,7 +40,7 @@ async fn main() {
             let input = Input::new();
             if input.should_step() {
                 println!("input");
-                frame = frame.step();
+                frame = frame.step(input);
                 input_timer = input::INPUT_DELAY;
             } else if input.undo && frame.prev.is_some() {
                 frame = *frame.prev.unwrap();
