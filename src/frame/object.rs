@@ -1,15 +1,15 @@
 use crate::math::{Direction, UPt};
 
-use super::property::Property;
+use super::property;
 
-pub type ObjectId = u64;
+pub type Id = u64;
 
 #[derive(Clone, Copy)]
 pub enum ObjectClass {
-    Generic(ObjectId),
-    TextProperty(&'static dyn Property),
+    Generic(Id),
+    TextProperty(property::Id),
     TextIs,
-    TextNoun(ObjectId),
+    TextNoun(Id),
 }
 
 #[derive(Clone, Copy)]
@@ -20,7 +20,7 @@ pub struct Object {
 }
 
 impl Object {
-    pub fn id(&self) -> ObjectId {
+    pub fn id(&self) -> Id {
         match self.class {
             ObjectClass::Generic(id) => id,
             _ => OBJ_TEXT,
@@ -28,6 +28,6 @@ impl Object {
     }
 }
 
-const OBJ_TEXT: ObjectId = 0;
-const OBJ_FERRIS: ObjectId = 1;
-const OBJ_WALL: ObjectId = 2;
+const OBJ_TEXT: Id = 0;
+const OBJ_FERRIS: Id = 1;
+const OBJ_WALL: Id = 2;

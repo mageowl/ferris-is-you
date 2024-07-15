@@ -1,6 +1,6 @@
 use std::{array, cell::RefCell, collections::HashMap, ops::Index};
 
-use object::{Object, ObjectId};
+use object::Object;
 use property::Property;
 
 use crate::{
@@ -43,7 +43,7 @@ impl<'a> IntoIterator for &'a Tile {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, Eq)]
 pub enum GameState {
     Playing,
     Win,
@@ -53,7 +53,7 @@ pub enum GameState {
 pub struct Frame {
     grid: [[Tile; 40]; 60],
     input: Option<Input>,
-    rules: HashMap<ObjectId, Vec<&'static dyn Property>>,
+    rules: HashMap<object::Id, Vec<Property>>,
     pub state: GameState,
     pub prev: Option<Box<Frame>>,
     next: Option<Box<RefCell<Frame>>>,
@@ -96,7 +96,13 @@ impl Frame {
             }
         }
 
-        (*self.next.take().unwrap()).into_inner()
+        let mut next = self.next.take().unwrap().into_inner();
+        next.prev = Some(Box::new(self));
+        if next.state == GameState::Playing {
+            next.compile_rules();
+        }
+
+        next
     }
 
     pub fn try_move(&self, mover: ObjectRef, direction: Direction) -> bool {
@@ -112,16 +118,11 @@ impl Frame {
                 continue;
             };
 
-            let mut solid = false;
             for property in properties {
-                solid |= property.is_solid();
-                if property.can_move_onto(self, (object.pos, i as u8), mover, direction) {
-                    solid = false;
-                    break;
+                if let Some(cb) = property.can_move_onto {
+                    can_move = cb(self, (object.pos, i as u8), mover, direction);
                 }
             }
-
-            can_move &= !solid;
         }
 
         if can_move {
@@ -141,10 +142,14 @@ impl Frame {
         self.next.as_ref().unwrap().borrow_mut().state = state;
     }
 
-    pub fn has_property(&self, object: &Object, property: impl Property) -> bool {
+    pub fn get_object(&self, object: ObjectRef) -> &Object {
+        &self.grid[object.0 .0][object.0 .1].objects[object.1 as usize]
+    }
+
+    pub fn has_property(&self, object: object::Id, property: property::Id) -> bool {
         self.rules
-            .get(&object.id())
-            .is_some_and(|vec| vec.iter().any(|p| property.type_id() == p.type_id()))
+            .get(&object)
+            .is_some_and(|vec| vec.iter().any(|p| *p == property))
     }
 
     pub fn get_overlapping(&self, object: ObjectRef) -> &Tile {
