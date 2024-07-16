@@ -28,6 +28,10 @@ impl Tile {
     pub fn remove(&mut self, index: u8) -> Object {
         self.objects.remove(index as usize)
     }
+
+    pub fn is_empty(&self) -> bool {
+        self.objects.is_empty()
+    }
 }
 
 impl<'a> IntoIterator for &'a Tile {

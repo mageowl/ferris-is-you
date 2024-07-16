@@ -50,18 +50,20 @@ impl Frame {
             for y in 0..40 {
                 let mut class = [0; 1];
                 file.read_exact(&mut class).unwrap();
-                dbg!(&class);
+
+                if class[0] == 0 {
+                    continue;
+                }
 
                 let mut id = [0; 8];
                 file.read_exact(&mut id).unwrap();
                 let id = u64::from_be_bytes(id);
-                dbg!(&id);
 
                 let class = match class[0] {
-                    0 => ObjectClass::Generic(id),
                     1 => ObjectClass::TextNoun(id),
                     2 => ObjectClass::TextIs,
                     3 => ObjectClass::TextProperty(id),
+                    4 => ObjectClass::Generic(id),
 
                     _ => panic!("Error reading level: unknown object class {}.", class[0]),
                 };

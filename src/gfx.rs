@@ -1,7 +1,6 @@
 use macroquad::{
     color::Color,
-    math::vec2,
-    texture::{draw_texture_ex, load_texture, DrawTextureParams, Texture2D},
+    texture::{draw_texture, load_texture, Texture2D},
 };
 
 use crate::frame::{
@@ -28,10 +27,8 @@ pub struct Assets {
 impl Assets {
     pub async fn load() -> Self {
         Self {
-            obj_ferris: load_texture("assets/sprites/ferris_down.png")
-                .await
-                .unwrap(),
-            obj_wall: load_texture("assets/sprites/wall.png").await.unwrap(),
+            obj_ferris: load_texture("assets/sprites/obj/ferris.png").await.unwrap(),
+            obj_wall: load_texture("assets/sprites/obj/wall.png").await.unwrap(),
 
             verb_is: load_texture("assets/sprites/text/is_on.png").await.unwrap(),
 
@@ -87,18 +84,18 @@ impl Assets {
 impl Frame {
     pub fn draw(&self, assets: &Assets) {
         for tile in &self.grid {
+            if tile.is_empty() {
+                continue;
+            }
+
             let pos = tile[0].pos;
 
             for object in tile {
-                draw_texture_ex(
+                draw_texture(
                     assets.get_sprite(&object).unwrap(),
                     (pos.x * 24) as f32,
                     (pos.y * 24) as f32,
                     Color::from_hex(0xffffff),
-                    DrawTextureParams {
-                        dest_size: Some(vec2(24.0, 24.0)),
-                        ..Default::default()
-                    },
                 )
             }
         }
