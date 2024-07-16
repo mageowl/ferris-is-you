@@ -9,7 +9,7 @@ enum Object {
 }
 
 fn main() {
-    let mut file = BufWriter::new(File::create("assets/levels/test.dat").unwrap());
+    let mut file = BufWriter::new(File::create("assets/levels/baba_01.dat").unwrap());
 
     let map = HashMap::from([
         ((0, 0), Object::Noun(1)),
@@ -18,7 +18,17 @@ fn main() {
         ((8, 0), Object::Noun(3)),
         ((9, 0), Object::Is),
         ((10, 0), Object::Property(4)),
-        (),
+        ((0, 2), Object::Object(2)),
+        ((1, 2), Object::Object(2)),
+        ((2, 2), Object::Object(2)),
+        ((3, 2), Object::Object(2)),
+        ((4, 2), Object::Object(2)),
+        ((5, 2), Object::Object(2)),
+        ((6, 2), Object::Object(2)),
+        ((7, 2), Object::Object(2)),
+        ((8, 2), Object::Object(2)),
+        ((9, 2), Object::Object(2)),
+        ((10, 2), Object::Object(2)),
     ]);
 
     for x in 0..30 {
