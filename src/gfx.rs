@@ -1,7 +1,8 @@
 use macroquad::{
     color::Color,
     math::vec2,
-    texture::{draw_texture_ex, load_texture, DrawTextureParams, Texture2D},
+    text::{load_ttf_font, Font},
+    texture::{draw_texture_ex, load_texture, DrawTextureParams, FilterMode, Texture2D},
 };
 
 use crate::frame::{
@@ -29,11 +30,21 @@ pub struct Assets {
     noun_flag: Texture2D,
     noun_tile: Texture2D,
     noun_rock: Texture2D,
+
+    pub font: Font,
+}
+
+macro_rules! filter {
+    ($($s:ident.$v:ident),*) => {
+        $(
+            $s.$v.set_filter(FilterMode::Nearest);
+        )*
+    };
 }
 
 impl Assets {
     pub async fn load() -> Self {
-        Self {
+        let mut s = Self {
             obj_ferris: load_texture("assets/sprites/obj/ferris.png").await.unwrap(),
             obj_wall: load_texture("assets/sprites/obj/wall.png").await.unwrap(),
             obj_flag: load_texture("assets/sprites/obj/flag.png").await.unwrap(),
@@ -70,7 +81,30 @@ impl Assets {
             noun_rock: load_texture("assets/sprites/text/noun/rock_on.png")
                 .await
                 .unwrap(),
-        }
+
+            font: load_ttf_font("assets/jumbledFont.ttf").await.unwrap(),
+        };
+
+        filter!(
+            s.obj_ferris,
+            s.obj_rock,
+            s.obj_wall,
+            s.obj_flag,
+            s.obj_tile,
+            s.verb_is,
+            s.noun_rock,
+            s.noun_ferris,
+            s.noun_wall,
+            s.noun_flag,
+            s.noun_tile,
+            s.prop_win,
+            s.prop_you,
+            s.prop_stop,
+            s.prop_push,
+            s.font
+        );
+
+        s
     }
 
     fn get_sprite(&self, object: &Object) -> Option<&Texture2D> {

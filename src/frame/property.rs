@@ -1,3 +1,5 @@
+use std::fmt::Debug;
+
 use crate::{frame::GameState, math::Direction};
 
 use super::{Frame, ObjectRef};
@@ -67,9 +69,7 @@ impl Property {
                 id,
                 on_step_end: inline_fn! [(frame: &Frame, object: ObjectRef) {
                     for object in frame.get_overlapping(object) {
-                        println!("checking obj");
                         if frame.has_property(object.id(), Property::YOU) {
-                            println!("won");
                             *frame.state.borrow_mut() = GameState::Win;
                         }
                     }
@@ -116,5 +116,11 @@ impl Ord for Property {
 impl PartialOrd for Property {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
+    }
+}
+
+impl Debug for Property {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Property(#{id})", id = self.id)
     }
 }

@@ -77,7 +77,7 @@ impl Frame {
                 s.grid[object.pos].add(object);
             }
         }
-        s.compile_rules();
+        s.rules = s.compile_rules();
 
         s
     }
@@ -106,30 +106,32 @@ impl Frame {
             }
         }
 
-        if let Some(ref next) = self.next {
-            let mut next = next.borrow_mut();
+        if let Some(next) = self.next.take() {
+            let mut next = next.into_inner();
+            next.prev = Some(Box::new(self));
 
-            for tile in &next.grid.clone() {
-                for (i, object) in tile.into_iter().enumerate() {
-                    let Some(properties) = self.rules.get(&object.id()) else {
-                        continue;
-                    };
-                    let obj_ref = (object.pos, i as u8);
+            if *next.state.borrow() == GameState::Playing {
+                let rules = next.compile_rules();
+                next.rules = rules.clone();
 
-                    for property in properties {
-                        property.on_step_end(&mut next, obj_ref);
+                for tile in &next.grid.clone() {
+                    for (i, object) in tile.into_iter().enumerate() {
+                        let Some(properties) = rules.get(&object.id()) else {
+                            continue;
+                        };
+                        let obj_ref = (object.pos, i as u8);
+
+                        for property in properties {
+                            property.on_step_end(&mut next, obj_ref);
+                        }
                     }
                 }
             }
-        }
 
-        let mut next = self.next.take().unwrap().into_inner();
-        next.prev = Some(Box::new(self));
-        if *next.state.borrow() == GameState::Playing {
-            next.compile_rules();
+            next
+        } else {
+            panic!("no next frame.")
         }
-
-        next
     }
 
     pub fn try_move(&self, mover: ObjectRef, direction: Direction) -> bool {
@@ -184,8 +186,8 @@ impl Frame {
         self.input.map(|i| i.direction).unwrap_or(None)
     }
 
-    fn compile_rules(&mut self) {
-        let mut rules: HashMap<u64, Vec<Property>> = HashMap::new();
+    fn compile_rules(&mut self) -> HashMap<u64, Vec<Property>> {
+        let mut rules = HashMap::new();
         rules.insert(Object::TEXT, vec![Property::get(Property::PUSH).unwrap()]);
 
         for tile in &self.grid {
@@ -223,7 +225,7 @@ impl Frame {
         }
 
         rules.iter_mut().for_each(|(_, v)| v.sort());
-        self.rules = rules;
+        rules
     }
 
     pub fn get_oldest(self) -> Self {
