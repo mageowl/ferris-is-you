@@ -67,7 +67,9 @@ impl Property {
                 id,
                 on_step_end: inline_fn! [(frame: &Frame, object: ObjectRef) {
                     for object in frame.get_overlapping(object) {
+                        println!("checking obj");
                         if frame.has_property(object.id(), Property::YOU) {
+                            println!("won");
                             *frame.state.borrow_mut() = GameState::Win;
                         }
                     }
