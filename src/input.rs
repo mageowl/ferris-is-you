@@ -1,32 +1,34 @@
-use macroquad::input::{is_key_down, KeyCode};
+use macroquad::input::{is_key_pressed, KeyCode};
 
 use crate::math::Direction;
 
-pub const INPUT_DELAY: f32 = 0.5;
+pub const INPUT_DELAY: f32 = 0.1;
 
 #[derive(Clone, Copy)]
 pub struct Input {
     pub direction: Option<Direction>,
     pub undo: bool,
     pub wait: bool,
+    pub restart: bool,
 }
 
 impl Input {
     pub fn new() -> Self {
         Self {
-            direction: if is_key_down(KeyCode::Left) {
+            direction: if is_key_pressed(KeyCode::Left) {
                 Some(Direction::Left)
-            } else if is_key_down(KeyCode::Right) {
+            } else if is_key_pressed(KeyCode::Right) {
                 Some(Direction::Right)
-            } else if is_key_down(KeyCode::Up) {
+            } else if is_key_pressed(KeyCode::Up) {
                 Some(Direction::Up)
-            } else if is_key_down(KeyCode::Down) {
+            } else if is_key_pressed(KeyCode::Down) {
                 Some(Direction::Down)
             } else {
                 None
             },
-            undo: is_key_down(KeyCode::Backspace),
-            wait: is_key_down(KeyCode::Space),
+            undo: is_key_pressed(KeyCode::Backspace) || is_key_pressed(KeyCode::Z),
+            wait: is_key_pressed(KeyCode::Space),
+            restart: is_key_pressed(KeyCode::R),
         }
     }
 

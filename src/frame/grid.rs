@@ -62,7 +62,7 @@ impl Index<u8> for Tile {
 
 #[derive(Clone)]
 pub struct Grid {
-    inner: [[Tile; 40]; 60],
+    inner: [[Tile; 20]; 30],
 }
 
 impl Grid {
@@ -108,14 +108,14 @@ impl<'a> Iterator for GridIter<'a> {
     type Item = &'a Tile;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let item = if self.i.x < 60 && self.i.y < 40 {
+        let item = if self.i.x < 30 && self.i.y < 20 {
             Some(&self.grid[self.i])
         } else {
             None
         };
 
         self.i.x += 1;
-        if self.i.x >= 60 {
+        if self.i.x >= 30 {
             self.i.x = 0;
             self.i.y += 1;
         }

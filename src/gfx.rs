@@ -1,6 +1,7 @@
 use macroquad::{
     color::Color,
-    texture::{draw_texture, load_texture, Texture2D},
+    math::vec2,
+    texture::{draw_texture_ex, load_texture, DrawTextureParams, Texture2D},
 };
 
 use crate::frame::{
@@ -12,6 +13,8 @@ use crate::frame::{
 pub struct Assets {
     obj_ferris: Texture2D,
     obj_wall: Texture2D,
+    obj_flag: Texture2D,
+    obj_tile: Texture2D,
 
     verb_is: Texture2D,
 
@@ -22,6 +25,8 @@ pub struct Assets {
 
     noun_ferris: Texture2D,
     noun_wall: Texture2D,
+    noun_flag: Texture2D,
+    noun_tile: Texture2D,
 }
 
 impl Assets {
@@ -29,6 +34,8 @@ impl Assets {
         Self {
             obj_ferris: load_texture("assets/sprites/obj/ferris.png").await.unwrap(),
             obj_wall: load_texture("assets/sprites/obj/wall.png").await.unwrap(),
+            obj_flag: load_texture("assets/sprites/obj/tile.png").await.unwrap(),
+            obj_tile: load_texture("assets/sprites/obj/tile.png").await.unwrap(),
 
             verb_is: load_texture("assets/sprites/text/is_on.png").await.unwrap(),
 
@@ -51,6 +58,12 @@ impl Assets {
             noun_wall: load_texture("assets/sprites/text/noun/wall_on.png")
                 .await
                 .unwrap(),
+            noun_flag: load_texture("assets/sprites/text/noun/flag_on.png")
+                .await
+                .unwrap(),
+            noun_tile: load_texture("assets/sprites/text/noun/tile_on.png")
+                .await
+                .unwrap(),
         }
     }
 
@@ -59,6 +72,8 @@ impl Assets {
             ObjectClass::Generic(id) => match id {
                 Object::FERRIS => Some(&self.obj_ferris),
                 Object::WALL => Some(&self.obj_wall),
+                Object::FLAG => Some(&self.obj_flag),
+                Object::TILE => Some(&self.obj_tile),
 
                 _ => None,
             },
@@ -66,6 +81,8 @@ impl Assets {
             ObjectClass::TextNoun(id) => match id {
                 Object::FERRIS => Some(&self.noun_ferris),
                 Object::WALL => Some(&self.noun_wall),
+                Object::FLAG => Some(&self.noun_flag),
+                Object::TILE => Some(&self.noun_tile),
 
                 _ => None,
             },
@@ -91,11 +108,15 @@ impl Frame {
             let pos = tile[0].pos;
 
             for object in tile {
-                draw_texture(
+                draw_texture_ex(
                     assets.get_sprite(&object).unwrap(),
                     (pos.x * 24) as f32,
                     (pos.y * 24) as f32,
                     Color::from_hex(0xffffff),
+                    DrawTextureParams {
+                        dest_size: Some(vec2(24.0, 24.0)),
+                        ..Default::default()
+                    },
                 )
             }
         }

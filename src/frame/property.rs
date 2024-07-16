@@ -45,6 +45,13 @@ impl Property {
                 id,
                 priority: 5,
                 can_move_onto: inline_fn! [(frame: &Frame, object: ObjectRef, _mover: ObjectRef, direction: Direction) -> bool {
+                    // Prevent pushing objects in wall.
+                    for object in frame.get_overlapping(object) {
+                        if frame.has_property(object.id(), Property::STOP) {
+                            return false;
+                        }
+                    }
+
                     frame.try_move(object, direction)
                 }],
                 ..Default::default()

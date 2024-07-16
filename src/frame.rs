@@ -12,7 +12,7 @@ use property::Property;
 
 use crate::{
     input::Input,
-    math::{upt, Direction},
+    math::{upt, Direction, Pt},
 };
 
 pub mod grid;
@@ -46,8 +46,8 @@ impl Frame {
         };
         let mut file = BufReader::new(File::open(path).unwrap());
 
-        for x in 0..60 {
-            for y in 0..40 {
+        for x in 0..30 {
+            for y in 0..20 {
                 let mut class = [0; 1];
                 file.read_exact(&mut class).unwrap();
 
@@ -77,13 +77,15 @@ impl Frame {
                 s.grid[object.pos].add(object);
             }
         }
+        s.compile_rules();
 
         s
     }
 
     pub fn step(mut self, input: Input) -> Self {
+        self.input = Some(input);
         self.next = Some(Box::new(RefCell::new(Self {
-            input: Some(input),
+            input: None,
             grid: self.grid.clone(),
             rules: HashMap::new(),
             state: self.state.clone(),
@@ -135,6 +137,12 @@ impl Frame {
             return false;
         }
 
+        // Prevent infinte push recursion
+        let ipt = Into::<Pt>::into(mover.0) + direction;
+        if ipt.x < 0 || ipt.y < 0 || ipt.x >= 30 || ipt.y >= 30 {
+            return false;
+        }
+
         let pos = mover.0 + direction;
         let target = &self.grid[pos];
 
@@ -177,6 +185,7 @@ impl Frame {
 
     fn compile_rules(&mut self) {
         let mut rules: HashMap<u64, Vec<Property>> = HashMap::new();
+        rules.insert(Object::TEXT, vec![Property::get(Property::PUSH).unwrap()]);
 
         for tile in &self.grid {
             for object_is in tile {
@@ -214,6 +223,14 @@ impl Frame {
 
         rules.iter_mut().for_each(|(_, v)| v.sort());
         self.rules = rules;
+    }
+
+    pub fn get_oldest(self) -> Self {
+        if let Some(frame) = self.prev {
+            frame.get_oldest()
+        } else {
+            self
+        }
     }
 }
 

@@ -24,6 +24,7 @@ impl Object {
     pub const FERRIS: Id = 01;
     pub const WALL: Id = 02;
     pub const FLAG: Id = 03;
+    pub const TILE: Id = 04;
 
     pub fn id(&self) -> Id {
         match self.class {
