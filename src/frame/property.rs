@@ -18,16 +18,17 @@ pub type Id = u64;
 #[derive(Clone, Copy, Default)]
 pub struct Property {
     pub id: Id,
+    pub priority: isize,
     pub on_step: Option<fn(&Frame, ObjectRef)>,
+    pub on_step_end: Option<fn(&Frame, ObjectRef)>,
     pub can_move_onto: Option<fn(&Frame, ObjectRef, ObjectRef, Direction) -> bool>,
-    pub on_move_onto: Option<fn(&Frame, ObjectRef, ObjectRef)>,
 }
 
 impl Property {
-    const YOU: Id = 01;
-    const PUSH: Id = 02;
-    const STOP: Id = 03;
-    const WIN: Id = 04;
+    pub const YOU: Id = 01;
+    pub const PUSH: Id = 02;
+    pub const STOP: Id = 03;
+    pub const WIN: Id = 04;
 
     pub fn get(id: u64) -> Option<Self> {
         match id {
@@ -42,6 +43,7 @@ impl Property {
             }),
             Property::PUSH => Some(Self {
                 id,
+                priority: 5,
                 can_move_onto: inline_fn! [(frame: &Frame, object: ObjectRef, _mover: ObjectRef, direction: Direction) -> bool {
                     frame.try_move(object, direction)
                 }],
@@ -56,9 +58,11 @@ impl Property {
             }),
             Property::WIN => Some(Self {
                 id,
-                on_move_onto: inline_fn! [(frame: &Frame, _o: ObjectRef, mover: ObjectRef) {
-                    if frame.has_property(frame.get_object(mover).id(), Property::YOU) {
-                        frame.set_state(GameState::Win)
+                on_step_end: inline_fn! [(frame: &Frame, object: ObjectRef) {
+                    for object in frame.get_overlapping(object) {
+                        if frame.has_property(object.id(), Property::YOU) {
+                            *frame.state.borrow_mut() = GameState::Win;
+                        }
                     }
                 }],
                 ..Default::default()
@@ -72,6 +76,12 @@ impl Property {
             cb(frame, object)
         }
     }
+
+    pub fn on_step_end(&self, frame: &Frame, object: ObjectRef) {
+        if let Some(cb) = self.on_step_end {
+            cb(frame, object)
+        }
+    }
 }
 
 impl PartialEq for Property {
@@ -80,8 +90,22 @@ impl PartialEq for Property {
     }
 }
 
+impl Eq for Property {}
+
 impl PartialEq<Id> for Property {
     fn eq(&self, other: &Id) -> bool {
         self.id == *other
+    }
+}
+
+impl Ord for Property {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        self.priority.cmp(&other.priority)
+    }
+}
+
+impl PartialOrd for Property {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
     }
 }

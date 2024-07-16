@@ -1,7 +1,7 @@
+use gfx::Assets;
 use input::Input;
 use macroquad::{
     color::Color,
-    text::draw_text,
     time::get_frame_time,
     window::{clear_background, next_frame, Conf},
 };
@@ -9,6 +9,7 @@ use macroquad::{
 use crate::frame::Frame;
 
 mod frame;
+mod gfx;
 mod input;
 mod math;
 
@@ -26,15 +27,10 @@ async fn main() {
     let mut frame = Frame::from_file("assets/levels/test.dat");
     let mut input_timer = 0.0;
 
+    let assets = Assets::load().await;
+
     loop {
         clear_background(Color::from_rgba(0, 0, 0, 255));
-        draw_text(
-            "Hello World",
-            10.0,
-            20.0,
-            24.0,
-            Color::from_rgba(255, 255, 255, 255),
-        );
 
         if input_timer <= 0.0 {
             let input = Input::new();
@@ -49,6 +45,8 @@ async fn main() {
         } else {
             input_timer -= get_frame_time();
         }
+
+        frame.draw(&assets);
 
         next_frame().await
     }

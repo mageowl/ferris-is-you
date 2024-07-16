@@ -20,14 +20,15 @@ pub struct Object {
 }
 
 impl Object {
+    pub const TEXT: Id = 00;
+    pub const FERRIS: Id = 01;
+    pub const WALL: Id = 02;
+    pub const FLAG: Id = 03;
+
     pub fn id(&self) -> Id {
         match self.class {
             ObjectClass::Generic(id) => id,
-            _ => OBJ_TEXT,
+            _ => Self::TEXT,
         }
     }
 }
-
-const OBJ_TEXT: Id = 0;
-const OBJ_FERRIS: Id = 1;
-const OBJ_WALL: Id = 2;
