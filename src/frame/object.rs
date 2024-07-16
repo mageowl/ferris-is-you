@@ -25,6 +25,7 @@ impl Object {
     pub const WALL: Id = 02;
     pub const FLAG: Id = 03;
     pub const TILE: Id = 04;
+    pub const ROCK: Id = 05;
 
     pub fn id(&self) -> Id {
         match self.class {

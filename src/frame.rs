@@ -163,6 +163,7 @@ impl Frame {
         if can_move {
             let mut object = self.next.as_ref().unwrap().borrow_mut().grid[mover.0].remove(mover.1);
             object.pos = pos;
+            object.facing = direction;
             self.next.as_ref().unwrap().borrow_mut().grid[pos].add(object);
         }
 

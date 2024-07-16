@@ -15,6 +15,7 @@ pub struct Assets {
     obj_wall: Texture2D,
     obj_flag: Texture2D,
     obj_tile: Texture2D,
+    obj_rock: Texture2D,
 
     verb_is: Texture2D,
 
@@ -27,6 +28,7 @@ pub struct Assets {
     noun_wall: Texture2D,
     noun_flag: Texture2D,
     noun_tile: Texture2D,
+    noun_rock: Texture2D,
 }
 
 impl Assets {
@@ -34,8 +36,9 @@ impl Assets {
         Self {
             obj_ferris: load_texture("assets/sprites/obj/ferris.png").await.unwrap(),
             obj_wall: load_texture("assets/sprites/obj/wall.png").await.unwrap(),
-            obj_flag: load_texture("assets/sprites/obj/tile.png").await.unwrap(),
+            obj_flag: load_texture("assets/sprites/obj/flag.png").await.unwrap(),
             obj_tile: load_texture("assets/sprites/obj/tile.png").await.unwrap(),
+            obj_rock: load_texture("assets/sprites/obj/rock.png").await.unwrap(),
 
             verb_is: load_texture("assets/sprites/text/is_on.png").await.unwrap(),
 
@@ -64,6 +67,9 @@ impl Assets {
             noun_tile: load_texture("assets/sprites/text/noun/tile_on.png")
                 .await
                 .unwrap(),
+            noun_rock: load_texture("assets/sprites/text/noun/rock_on.png")
+                .await
+                .unwrap(),
         }
     }
 
@@ -74,6 +80,7 @@ impl Assets {
                 Object::WALL => Some(&self.obj_wall),
                 Object::FLAG => Some(&self.obj_flag),
                 Object::TILE => Some(&self.obj_tile),
+                Object::ROCK => Some(&self.obj_rock),
 
                 _ => None,
             },
@@ -83,6 +90,7 @@ impl Assets {
                 Object::WALL => Some(&self.noun_wall),
                 Object::FLAG => Some(&self.noun_flag),
                 Object::TILE => Some(&self.noun_tile),
+                Object::ROCK => Some(&self.noun_rock),
 
                 _ => None,
             },

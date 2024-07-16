@@ -23,7 +23,7 @@ fn window_config() -> Conf {
 
 #[macroquad::main(window_config)]
 async fn main() {
-    let mut frame = Frame::from_file("assets/levels/test.dat");
+    let mut frame = Frame::from_file("assets/levels/baba_00.dat");
     let assets = Assets::load().await;
 
     loop {
