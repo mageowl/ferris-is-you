@@ -48,7 +48,7 @@ impl Property {
                 priority: 5,
                 can_move_onto: inline_fn! [(frame: &Frame, object: ObjectRef, _mover: ObjectRef, direction: Direction) -> bool {
                     // Prevent pushing objects in wall.
-                    for object in frame.get_overlapping(object) {
+                    for (_, object) in frame.get_overlapping(object) {
                         if frame.has_property(object.id(), Property::STOP) {
                             return false;
                         }
@@ -68,7 +68,7 @@ impl Property {
             Property::WIN => Some(Self {
                 id,
                 on_step_end: inline_fn! [(frame: &Frame, object: ObjectRef) {
-                    for object in frame.get_overlapping(object) {
+                    for (_, object) in frame.get_overlapping(object) {
                         if frame.has_property(object.id(), Property::YOU) {
                             *frame.state.borrow_mut() = GameState::Win;
                         }

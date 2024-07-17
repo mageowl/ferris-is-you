@@ -94,11 +94,11 @@ impl Frame {
         })));
 
         for tile in &self.grid {
-            for (i, object) in tile.into_iter().enumerate() {
+            for (i, object) in tile {
                 let Some(properties) = self.rules.get(&object.id()) else {
                     continue;
                 };
-                let obj_ref = (object.pos, i as u8);
+                let obj_ref = (object.pos, *i);
 
                 for property in properties {
                     property.on_step(&self, obj_ref);
@@ -115,11 +115,11 @@ impl Frame {
                 next.rules = rules.clone();
 
                 for tile in &next.grid.clone() {
-                    for (i, object) in tile.into_iter().enumerate() {
+                    for (i, object) in tile {
                         let Some(properties) = rules.get(&object.id()) else {
                             continue;
                         };
-                        let obj_ref = (object.pos, i as u8);
+                        let obj_ref = (object.pos, *i);
 
                         for property in properties {
                             property.on_step_end(&mut next, obj_ref);
@@ -149,21 +149,23 @@ impl Frame {
         let target = &self.grid[pos];
 
         let mut can_move = true;
-        for (i, object) in target.into_iter().enumerate() {
+        for (i, object) in target {
             let Some(properties) = self.rules.get(&object.id()) else {
                 continue;
             };
 
             for property in properties {
                 if let Some(cb) = property.can_move_onto {
-                    can_move &= cb(self, (object.pos, i as u8), mover, direction);
+                    can_move &= cb(self, (object.pos, *i), mover, direction);
                     break;
                 }
             }
         }
 
         if can_move {
-            let mut object = self.next.as_ref().unwrap().borrow_mut().grid[mover.0].remove(mover.1);
+            let mut object = self.next.as_ref().unwrap().borrow_mut().grid[mover.0]
+                .remove(mover.1)
+                .unwrap();
             object.pos = pos;
             object.facing = direction;
             self.next.as_ref().unwrap().borrow_mut().grid[pos].add(object);
@@ -191,12 +193,12 @@ impl Frame {
         rules.insert(Object::TEXT, vec![Property::get(Property::PUSH).unwrap()]);
 
         for tile in &self.grid {
-            for object_is in tile {
+            for (_, object_is) in tile {
                 if let ObjectClass::TextIs = object_is.class {
                     let mut check_direction = |d: Direction| {
-                        for object_noun in &self.grid[object_is.pos + d] {
+                        for (_, object_noun) in &self.grid[object_is.pos + d] {
                             if let ObjectClass::TextNoun(noun_id) = object_noun.class {
-                                for object_prop in &self.grid[object_is.pos + d.opposite()] {
+                                for (_, object_prop) in &self.grid[object_is.pos + d.opposite()] {
                                     if let ObjectClass::TextProperty(property_id) =
                                         object_prop.class
                                     {

@@ -33,4 +33,16 @@ impl Object {
             _ => Self::TEXT,
         }
     }
+
+    pub fn z_index(&self) -> Option<i8> {
+        match self.id() {
+            Object::TEXT => Some(15),
+            Object::FERRIS => Some(10),
+            Object::ROCK => Some(8),
+            Object::WALL => Some(3),
+            Object::FLAG => Some(5),
+            Object::TILE => Some(0),
+            _ => None,
+        }
+    }
 }

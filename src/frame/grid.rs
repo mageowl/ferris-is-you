@@ -1,5 +1,7 @@
 use std::{
     array,
+    collections::HashMap,
+    mem,
     ops::{Index, IndexMut},
 };
 
@@ -11,22 +13,28 @@ pub type ObjectRef = (UPt, u8);
 
 #[derive(Clone)]
 pub struct Tile {
-    objects: Vec<Object>,
+    objects: HashMap<u8, Object>,
 }
 
 impl Tile {
     pub fn empty() -> Self {
         Self {
-            objects: Vec::new(),
+            objects: HashMap::new(),
         }
     }
 
-    pub fn add(&mut self, object: Object) {
-        self.objects.push(object)
+    pub fn add(&mut self, object: Object) -> u8 {
+        let mut i = 0;
+        while self.objects.contains_key(&i) {
+            i += 1;
+        }
+
+        self.objects.insert(i, object);
+        i
     }
 
-    pub fn remove(&mut self, index: u8) -> Object {
-        self.objects.remove(index as usize)
+    pub fn remove(&mut self, index: u8) -> Option<Object> {
+        self.objects.remove(&index)
     }
 
     pub fn is_empty(&self) -> bool {
@@ -35,20 +43,11 @@ impl Tile {
 }
 
 impl<'a> IntoIterator for &'a Tile {
-    type Item = &'a Object;
-    type IntoIter = std::slice::Iter<'a, Object>;
+    type Item = (&'a u8, &'a Object);
+    type IntoIter = std::collections::hash_map::Iter<'a, u8, Object>;
 
     fn into_iter(self) -> Self::IntoIter {
         self.objects.iter()
-    }
-}
-
-impl<'a> IntoIterator for &'a mut Tile {
-    type Item = &'a mut Object;
-    type IntoIter = std::slice::IterMut<'a, Object>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.objects.iter_mut()
     }
 }
 
@@ -56,7 +55,7 @@ impl Index<u8> for Tile {
     type Output = Object;
 
     fn index(&self, index: u8) -> &Self::Output {
-        &self.objects[index as usize]
+        &self.objects[&index]
     }
 }
 

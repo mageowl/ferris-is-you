@@ -2,8 +2,6 @@ use macroquad::input::{is_key_pressed, KeyCode};
 
 use crate::math::Direction;
 
-pub const INPUT_DELAY: f32 = 0.1;
-
 #[derive(Clone, Copy)]
 pub struct Input {
     pub direction: Option<Direction>,

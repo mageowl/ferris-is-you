@@ -3,8 +3,7 @@ use gfx::Assets;
 use input::Input;
 use macroquad::{
     color::Color,
-    text::{draw_text_ex, load_ttf_font, measure_text, TextParams},
-    texture::FilterMode,
+    text::{draw_text_ex, measure_text, TextParams},
     window::{clear_background, next_frame, screen_height, screen_width, Conf},
 };
 
