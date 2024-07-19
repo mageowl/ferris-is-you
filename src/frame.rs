@@ -46,8 +46,8 @@ impl Frame {
         };
         let mut file = BufReader::new(File::open(path).unwrap());
 
-        for x in 0..30 {
-            for y in 0..20 {
+        for y in 0..20 {
+            for x in 0..30 {
                 let mut class = [0; 1];
                 file.read_exact(&mut class).unwrap();
 

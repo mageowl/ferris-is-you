@@ -1,0 +1,160 @@
+body {
+  background: black;
+  margin: 0;
+
+  font-family: sans-serif;
+  color: white;
+}
+
+input {
+  display: inline-block;
+  width: calc(100% - 30px);
+  margin-bottom: 8px;
+
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #888;
+  outline: none;
+
+  font-size: inherit;
+  font-weight: bold;
+  color: inherit;
+}
+
+#app {
+  height: 100vh;
+
+  display: grid;
+  grid-template-columns: max(20vw, 300px) 1fr 60px;
+  grid-template-rows: 1fr;
+
+  #palette {
+    padding: 20px;
+
+    span {
+      display: block;
+      padding: 4px;
+
+      cursor: pointer;
+
+      &:hover {
+        color: black;
+        background-color: white;
+        border-radius: 4px;
+      }
+    }
+  }
+
+  #grid-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    max-height: 100vh;
+
+    .grid {
+      aspect-ratio: 30 / 20;
+      width: 100%;
+      max-height: calc(100% - 20px);
+
+      display: grid;
+      grid-template-columns: repeat(30, 1fr);
+      grid-template-rows: repeat(20, 1fr);
+
+      border: 4px solid white;
+      border-radius: 12px;
+      cursor: crosshair;
+
+      div {
+        image-rendering: pixelated;
+        background: center / cover no-repeat;
+        user-select: none;
+      }
+    }
+  }
+
+  #toolbar {
+    display: flex;
+    flex-direction: column;
+
+    padding: 20px 5px;
+
+    span {
+      display: block;
+      height: 30px;
+      margin-bottom: 8px;
+      padding: 10px;
+
+      border-radius: 8px;
+
+      image-rendering: pixelated;
+      background: center / 70% no-repeat;
+      cursor: pointer;
+
+      &.selected {
+        filter: invert();
+        background-color: black;
+      }
+
+      &#tool-draw {
+        background-image: url(./pencil.svg);
+      }
+
+      &#tool-erase {
+        background-image: url(./eraser.svg);
+      }
+
+      &#tool-text {
+        background-image: url(./type.svg);
+      }
+
+      &#btn-save {
+        margin-top: auto;
+        background-image: url(./save.svg);
+      }
+    }
+  }
+}
+
+#dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  translate: -50% -50%;
+
+  padding: 20px;
+  background-color: black;
+  border: 4px solid white;
+  border-radius: 8px;
+
+  &.show {
+    display: block;
+  }
+
+  button {
+    float: right;
+
+    color: inherit;
+    font-weight: bold;
+    font-size: inherit;
+
+    border: none;
+    cursor: pointer;
+    background-color: transparent;
+  }
+}
+
+#scrim {
+  display: none;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+
+  background-color: #0002;
+
+  &.show {
+    display: block;
+  }
+}

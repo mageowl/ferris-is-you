@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Ferris is You &#x2014; Level Editor</title>
+    <link href="style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div id="app">
+      <div id="palette">
+        <h3>Objects</h3>
+        <h3 class="text">Text</h3>
+      </div>
+      <div id="grid-container">
+        <div class="grid"></div>
+      </div>
+      <div id="toolbar">
+        <span id="tool-draw" class="selected"></span>
+        <span id="tool-erase"></span>
+        <span id="tool-text"></span>
+        <span id="btn-save"></span>
+      </div>
+    </div>
+    <div id="scrim"></div>
+    <form id="dialog">
+      Enter text:
+      <input /><button>&#x2192;</button>
+    </div>
+    <script src="js/page.js" type="module"></script>
+  </body>
+</html>
