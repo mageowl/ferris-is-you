@@ -1,7 +1,6 @@
 use std::{
     array,
     collections::HashMap,
-    mem,
     ops::{Index, IndexMut},
 };
 

@@ -22,7 +22,7 @@ document.querySelector("#btn-save").addEventListener("click", () => {
         case ObjectType.EMPTY:
           return [0];
         case ObjectType.IS:
-          return [0, 0, 0, 0, 0, 0, 0, 0, 0];
+          return [2, 0, 0, 0, 0, 0, 0, 0, 0];
         default:
           return [t.type, ...u64bytes(t.id)];
       }

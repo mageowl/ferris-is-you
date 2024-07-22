@@ -4,7 +4,7 @@ use super::property;
 
 pub type Id = u64;
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Debug)]
 pub enum ObjectClass {
     Generic(Id),
     TextProperty(property::Id),

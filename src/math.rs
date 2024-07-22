@@ -108,3 +108,13 @@ impl Into<Pt> for Direction {
         }
     }
 }
+
+pub fn read_u64(iter: &mut impl Iterator<Item = u8>) -> Result<u64, ()> {
+    let mut bytes = [0; 8];
+
+    for i in 0..8 {
+        bytes[i] = iter.next().ok_or(())?;
+    }
+
+    Ok(u64::from_be_bytes(bytes))
+}

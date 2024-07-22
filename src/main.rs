@@ -25,8 +25,8 @@ fn window_config() -> Conf {
 
 #[macroquad::main(window_config)]
 async fn main() {
-    let mut frame = Frame::from_file("assets/levels/my_level.dat");
     let assets = Assets::load().await;
+    let mut frame = Frame::from_file(include_bytes!("../assets/levels/baba_lvl00.dat"));
 
     loop {
         clear_background(Color::from_rgba(0, 0, 0, 255));
@@ -40,7 +40,11 @@ async fn main() {
             } else if input.restart {
                 frame = frame.get_oldest();
             }
-        } else {
+        }
+
+        frame.draw(&assets);
+
+        if *frame.state.borrow() == GameState::Win {
             const WIN_MESSAGE: &'static str = "CONGRADULATIONS";
             const FONT_SIZE: u16 = 30;
             let size = measure_text(WIN_MESSAGE, Some(&assets.font), FONT_SIZE, 1.0);
@@ -55,8 +59,6 @@ async fn main() {
                 },
             )
         }
-
-        frame.draw(&assets);
 
         next_frame().await
     }

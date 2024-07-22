@@ -147,15 +147,14 @@ impl Frame {
                 continue;
             }
 
-            let pos = tile[0].pos;
             let mut objects = tile.into_iter().collect::<Vec<_>>();
             objects.sort_by(|a, b| a.1.z_index().cmp(&b.1.z_index()));
 
             for (_, object) in objects {
                 draw_texture_ex(
                     assets.get_sprite(object).unwrap(),
-                    (pos.x * 24) as f32,
-                    (pos.y * 24) as f32,
+                    (object.pos.x * 24) as f32,
+                    (object.pos.y * 24) as f32,
                     Color::from_hex(0xffffff),
                     DrawTextureParams {
                         dest_size: Some(vec2(24.0, 24.0)),

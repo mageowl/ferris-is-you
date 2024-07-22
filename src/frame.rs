@@ -1,10 +1,4 @@
-use std::{
-    cell::RefCell,
-    collections::HashMap,
-    fs::File,
-    io::{BufReader, Read},
-    ops::Index,
-};
+use std::{cell::RefCell, collections::HashMap, ops::Index};
 
 use grid::{Grid, ObjectRef, Tile};
 use object::{Object, ObjectClass};
@@ -12,7 +6,7 @@ use property::Property;
 
 use crate::{
     input::Input,
-    math::{upt, Direction, Pt},
+    math::{read_u64, upt, Direction, Pt},
 };
 
 pub mod grid;
@@ -35,7 +29,7 @@ pub struct Frame {
 }
 
 impl Frame {
-    pub fn from_file(path: &str) -> Self {
+    pub fn from_file(bytes: &[u8]) -> Self {
         let mut s = Self {
             grid: Grid::empty(),
             input: None,
@@ -44,28 +38,25 @@ impl Frame {
             prev: None,
             next: None,
         };
-        let mut file = BufReader::new(File::open(path).unwrap());
+        let mut bytes = bytes.iter().copied();
 
         for y in 0..20 {
             for x in 0..30 {
-                let mut class = [0; 1];
-                file.read_exact(&mut class).unwrap();
+                let class = bytes.next().expect("Missing tiles in level.");
 
-                if class[0] == 0 {
+                if class == 0 {
                     continue;
                 }
 
-                let mut id = [0; 8];
-                file.read_exact(&mut id).unwrap();
-                let id = u64::from_be_bytes(id);
+                let id = read_u64(&mut bytes).expect("Missing object id in level.");
 
-                let class = match class[0] {
+                let class = match class {
                     1 => ObjectClass::TextNoun(id),
                     2 => ObjectClass::TextIs,
                     3 => ObjectClass::TextProperty(id),
                     4 => ObjectClass::Generic(id),
 
-                    _ => panic!("Error reading level: unknown object class {}.", class[0]),
+                    _ => panic!("Error reading level: unknown object class {}.", class),
                 };
 
                 let object = Object {

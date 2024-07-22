@@ -27,10 +27,10 @@ pub struct Property {
 }
 
 impl Property {
-    pub const YOU: Id = 01;
-    pub const PUSH: Id = 02;
-    pub const STOP: Id = 03;
-    pub const WIN: Id = 04;
+    pub const YOU: Id = 00;
+    pub const PUSH: Id = 01;
+    pub const STOP: Id = 02;
+    pub const WIN: Id = 03;
 
     pub fn get(id: u64) -> Option<Self> {
         match id {
