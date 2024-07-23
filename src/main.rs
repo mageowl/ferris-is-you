@@ -26,7 +26,7 @@ fn window_config() -> Conf {
 #[macroquad::main(window_config)]
 async fn main() {
     let assets = Assets::load().await;
-    let mut frame = Frame::from_file(include_bytes!("../assets/levels/baba_lvl00.dat"));
+    let mut frame = Frame::from_file(include_bytes!("../assets/levels/baba_lvl01.dat"));
 
     loop {
         clear_background(Color::from_rgba(0, 0, 0, 255));

@@ -1,5 +1,5 @@
-import { ObjectType } from "./consts.js";
-import { gridData } from "./grid.js";
+import { LEVEL_HEIGHT, LEVEL_WIDTH, ObjectType } from "./consts.js";
+import { gridData, loadData } from "./grid.js";
 
 function u64bytes(int) {
   // we want to represent the input as a 8-bytes array
@@ -35,4 +35,58 @@ document.querySelector("#btn-save").addEventListener("click", () => {
   anchor.href = URL.createObjectURL(blob);
   anchor.download = "my_level.dat";
   anchor.click();
+});
+
+document.querySelector("#btn-open").addEventListener("click", () => {
+  document.querySelector("#file-dialog").click();
+});
+
+document.querySelector("#file-dialog").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  const bytes = await file.bytes();
+  let i = 0;
+  let newData = [];
+
+  for (let _ = 0; _ < LEVEL_WIDTH * LEVEL_HEIGHT; _++) {
+    let objClass = bytes[i++];
+
+    if (objClass === 0) {
+      newData.push({ type: ObjectType.EMPTY });
+      continue;
+    }
+
+    let idBytes = bytes.slice(i, i + 8);
+    i += 8;
+
+    let idBig = 0n;
+    for (const int of idBytes.values()) {
+      const bint = BigInt(int);
+      idBig = (idBig << 8n) + bint;
+    }
+    let id = Number(idBig);
+
+    switch (objClass) {
+      case 1: {
+        newData.push({ type: ObjectType.NOUN, id });
+        break;
+      }
+      case 2: {
+        newData.push({ type: ObjectType.IS });
+        break;
+      }
+      case 3: {
+        newData.push({ type: ObjectType.PROPERTY, id });
+        break;
+      }
+      case 4: {
+        newData.push({ type: ObjectType.GENERIC, id });
+        break;
+      }
+      default: {
+        console.error(objClass);
+      }
+    }
+  }
+
+  loadData(newData);
 });

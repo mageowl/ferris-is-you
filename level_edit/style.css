@@ -84,6 +84,7 @@ input {
       margin-bottom: 8px;
       padding: 10px;
 
+      border: none;
       border-radius: 8px;
 
       image-rendering: pixelated;
@@ -107,12 +108,20 @@ input {
         background-image: url(./type.svg);
       }
 
-      &#btn-save {
+      &#btn-open {
         margin-top: auto;
+        background-image: url(./upload.svg);
+      }
+
+      &#btn-save {
         background-image: url(./save.svg);
       }
     }
   }
+}
+
+#file-dialog {
+  display: none;
 }
 
 #dialog {

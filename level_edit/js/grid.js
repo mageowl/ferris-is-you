@@ -47,15 +47,19 @@ export function back() {
   historyIdx -= 1;
   if (historyIdx < 0) historyIdx = 0;
 
-  gridData = history[historyIdx];
-  Array.from(grid.children).forEach((el, i) => {
-    el.style.backgroundImage = sprite(gridData[i]);
-  });
+  loadData(history[historyIdx]);
 }
 
 export function forward() {
   historyIdx += 1;
   if (historyIdx >= history.length) historyIdx = history.length - 1;
 
-  gridData = history[historyIdx];
+  loadData(history[historyIdx]);
+}
+
+export function loadData(data) {
+  gridData = data;
+  Array.from(grid.children).forEach((el, i) => {
+    el.style.backgroundImage = sprite(gridData[i]);
+  });
 }
