@@ -1,9 +1,11 @@
 use frame::GameState;
 use gfx::Assets;
 use input::Input;
+use level_select::get_level;
 use macroquad::{
     color::Color,
     text::{draw_text_ex, measure_text, TextParams},
+    time::get_frame_time,
     window::{clear_background, next_frame, screen_height, screen_width, Conf},
 };
 
@@ -12,6 +14,7 @@ use crate::frame::Frame;
 mod frame;
 mod gfx;
 mod input;
+mod level_select;
 mod math;
 
 fn window_config() -> Conf {
@@ -26,9 +29,11 @@ fn window_config() -> Conf {
 #[macroquad::main(window_config)]
 async fn main() {
     let assets = Assets::load().await;
-    let mut frame = Frame::from_file(include_bytes!("../assets/levels/baba_lvl01.dat"));
 
-    loop {
+    let mut frame = Frame::from_file(&get_level(&assets).await);
+    let mut win_timer = 1.;
+
+    while win_timer > 0. {
         clear_background(Color::from_rgba(0, 0, 0, 255));
 
         if *frame.state.borrow() == GameState::Playing {
@@ -47,6 +52,7 @@ async fn main() {
         if *frame.state.borrow() == GameState::Win {
             const WIN_MESSAGE: &'static str = "CONGRADULATIONS";
             const FONT_SIZE: u16 = 30;
+
             let size = measure_text(WIN_MESSAGE, Some(&assets.font), FONT_SIZE, 1.0);
             draw_text_ex(
                 WIN_MESSAGE,
@@ -57,7 +63,9 @@ async fn main() {
                     font_size: FONT_SIZE,
                     ..Default::default()
                 },
-            )
+            );
+
+            win_timer -= get_frame_time();
         }
 
         next_frame().await
