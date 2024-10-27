@@ -37,8 +37,8 @@ impl Add<Pt> for UPt {
 
     fn add(self, rhs: Pt) -> Self::Output {
         Self {
-            x: (self.x as isize + rhs.x).clamp(0, 30) as usize,
-            y: (self.y as isize + rhs.y).clamp(0, 20) as usize,
+            x: (self.x as isize + rhs.x).clamp(0, 29) as usize,
+            y: (self.y as isize + rhs.y).clamp(0, 19) as usize,
         }
     }
 }
